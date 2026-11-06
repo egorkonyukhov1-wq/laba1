@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/item-claims")
@@ -15,9 +16,7 @@ public class ItemClaimController {
     public ItemClaimController(ItemClaimService service) { this.service = service; }
 
     @GetMapping
-    public ResponseEntity<List<ItemClaim>> getAll() {
-        return ResponseEntity.ok(service.getAll());
-    }
+    public ResponseEntity<List<ItemClaim>> getAll() { return ResponseEntity.ok(service.getAll()); }
 
     @GetMapping("/{id}")
     public ResponseEntity<ItemClaim> getById(@PathVariable Long id) {
@@ -25,8 +24,11 @@ public class ItemClaimController {
     }
 
     @PostMapping
-    public ResponseEntity<ItemClaim> create(@RequestBody ItemClaim claim) {
-        ItemClaim created = service.create(claim);
+    public ResponseEntity<ItemClaim> create(@RequestBody Map<String, Object> body) {
+        Long lossId = Long.valueOf(body.get("lossReportId").toString());
+        Long itemId = Long.valueOf(body.get("foundItemId").toString());
+        String evidence = body.get("evidence").toString();
+        ItemClaim created = service.create(lossId, itemId, evidence);
         return ResponseEntity.created(URI.create("/api/item-claims/" + created.getId())).body(created);
     }
 
@@ -38,6 +40,6 @@ public class ItemClaimController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (service.delete(id)) return ResponseEntity.noContent().build();
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
 }

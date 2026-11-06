@@ -3,6 +3,7 @@ package konukhov.laba1.controller;
 import konukhov.laba1.model.LossReport;
 import konukhov.laba1.service.LossReportService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
@@ -15,9 +16,7 @@ public class LossReportController {
     public LossReportController(LossReportService service) { this.service = service; }
 
     @GetMapping
-    public ResponseEntity<List<LossReport>> getAll() {
-        return ResponseEntity.ok(service.getAll());
-    }
+    public ResponseEntity<List<LossReport>> getAll() { return ResponseEntity.ok(service.getAll()); }
 
     @GetMapping("/{id}")
     public ResponseEntity<LossReport> getById(@PathVariable Long id) {
@@ -25,8 +24,8 @@ public class LossReportController {
     }
 
     @PostMapping
-    public ResponseEntity<LossReport> create(@RequestBody LossReport report) {
-        LossReport created = service.create(report);
+    public ResponseEntity<LossReport> create(@RequestBody LossReport report, Authentication auth) {
+        LossReport created = service.create(report, auth.getName());
         return ResponseEntity.created(URI.create("/api/loss-reports/" + created.getId())).body(created);
     }
 
@@ -38,6 +37,6 @@ public class LossReportController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         if (service.delete(id)) return ResponseEntity.noContent().build();
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
 }

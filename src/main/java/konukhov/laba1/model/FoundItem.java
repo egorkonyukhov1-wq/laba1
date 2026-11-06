@@ -1,6 +1,12 @@
 package konukhov.laba1.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "found_items")
 public class FoundItem {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String description;
     private String category;
@@ -8,9 +14,7 @@ public class FoundItem {
     private String status;
 
     public FoundItem() {}
-    public FoundItem(Long id, String description, String category, String location, String status) {
-        this.id = id; this.description = description; this.category = category; this.location = location; this.status = status;
-    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getDescription() { return description; }

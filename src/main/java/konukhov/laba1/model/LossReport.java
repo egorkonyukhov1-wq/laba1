@@ -1,20 +1,28 @@
 package konukhov.laba1.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "loss_reports")
 public class LossReport {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     private String description;
     private String category;
     private String status;
 
     public LossReport() {}
-    public LossReport(Long id, Long userId, String description, String category, String status) {
-        this.id = id; this.userId = userId; this.description = description; this.category = category; this.status = status;
-    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
     public String getCategory() { return category; }

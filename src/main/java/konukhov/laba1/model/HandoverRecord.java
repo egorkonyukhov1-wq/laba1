@@ -1,26 +1,29 @@
 package konukhov.laba1.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "handover_records")
 public class HandoverRecord {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long claimId;
+
+    @OneToOne
+    @JoinColumn(name = "claim_id", nullable = false)
+    private ItemClaim claim;
+
     private String date;
-    private Boolean confirmed;
+    private boolean confirmed;
 
     public HandoverRecord() {}
-    public HandoverRecord(Long id, Long claimId, String date, boolean confirmed) {
-        this.id = id; this.claimId = claimId; this.date = date; this.confirmed = confirmed;
-    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public Long getClaimId() { return claimId; }
-    public void setClaimId(Long claimId) { this.claimId = claimId; }
+    public ItemClaim getClaim() { return claim; }
+    public void setClaim(ItemClaim claim) { this.claim = claim; }
     public String getDate() { return date; }
     public void setDate(String date) { this.date = date; }
-    public Boolean getConfirmed() {
-        return confirmed;
-    }
-
-    public void setConfirmed(Boolean confirmed) {
-        this.confirmed = confirmed;
-    }
+    public boolean isConfirmed() { return confirmed; }
+    public void setConfirmed(boolean confirmed) { this.confirmed = confirmed; }
 }

@@ -1,43 +1,35 @@
 package konukhov.laba1.controller;
 
 import konukhov.laba1.model.User;
-import konukhov.laba1.service.UserService;
+import konukhov.laba1.repository.UserRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-    private final UserService service;
+    private final UserRepository userRepository;
 
-    public UserController(UserService service) { this.service = service; }
+    public UserController(UserRepository userRepository) { this.userRepository = userRepository; }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAll() {
-        return ResponseEntity.ok(service.getAll());
-    }
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getAll() { return ResponseEntity.ok(userRepository.findAll()); }
 
     @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable Long id) {
-        return service.getById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ResponseEntity<User> create(@RequestBody User user) {
-        User created = service.create(user);
-        return ResponseEntity.created(URI.create("/api/users/" + created.getId())).body(created);
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
-        return service.update(id, user).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return userRepository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (service.delete(id)) return ResponseEntity.noContent().build();
-        return ResponseEntity.badRequest().build();
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
     }
 }
