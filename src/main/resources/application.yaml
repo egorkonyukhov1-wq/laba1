@@ -1,20 +1,27 @@
 spring:
   application:
     name: "1BIB23289"
-spring:
-  application:
-    name: "Твой_номер_билета"
   datasource:
-    url: jdbc:h2:file:./data/lostfound_db
-    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH
+    driver-class-name: org.h2.Driver
     username: sa
-    password: password
+    password:
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
-    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: true
+    locations: classpath:db/megration
   h2:
     console:
       enabled: true
       path: /h2-console
+
+jwt:
+  secret: dGhpcy1pcy1hLXN1cGVyLXNlY3JldC1rZXktZm9yLWp3dC1zaWduaW5nLTEyMzQ1Njc4OTA=
+  accessExpiration: 900000
+  refreshExpiration: 604800000

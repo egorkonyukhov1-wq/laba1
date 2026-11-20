@@ -1,0 +1,40 @@
+### 1. Регистрация нового пользователя (ожидаем 201)
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Password123!",
+  "deviceId": "laptop-1"
+}
+
+> {%
+    client.global.set("access_token", response.body.accessToken);
+    client.global.set("refresh_token", response.body.refreshToken);
+%}
+
+### 2. Доступ к защищенному эндпоинту (ожидаем 200)
+GET http://localhost:8080/me
+Authorization: Bearer {{access_token}}
+
+### 3. Обновление пары токенов (Refresh) (ожидаем 200)
+POST http://localhost:8080/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refresh_token}}"
+}
+
+> {%
+    client.global.set("old_refresh_token", client.global.get("refresh_token"));
+    client.global.set("access_token", response.body.accessToken);
+    client.global.set("refresh_token", response.body.refreshToken);
+%}
+
+### 4. Повторное использование СТАРОГО refresh (ожидаем 401)
+POST http://localhost:8080/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{old_refresh_token}}"
+}

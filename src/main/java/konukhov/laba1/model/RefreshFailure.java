@@ -1,0 +1,6 @@
+package konukhov.laba1.model;
+
+public enum RefreshFailure {
+    INVALID_TOKEN, SESSION_NOT_FOUND, TOKEN_REUSED, TOKEN_REVOKED,
+    EXPIRED, SUBJECT_MISMATCH, USER_NOT_AVAILABLE
+}
